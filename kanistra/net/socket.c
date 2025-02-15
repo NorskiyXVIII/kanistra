@@ -42,7 +42,7 @@ int kansock_lconnect(int conn, struct addrinfo* remote_addr, kansock_fn_print_tw
     while (1) {
         error = connect(conn, remote_sockaddr, sizeof(struct sockaddr));
         printf("trying connect to addr[");
-        struct sockaddr_in* rem = (struct sockaddr*)remote_sockaddr;
+        struct sockaddr_in* rem = (struct sockaddr_in*)remote_sockaddr;
         print_ip_and_port(rem->sin_addr, rem->sin_port);
         printf("]\n");
 
@@ -69,4 +69,62 @@ int kansock_connect(int conn, struct addrinfo* remote_addr) {
 
         remote_sockaddr = remote_addr->ai_addr;
     }
+}
+
+int kansock_netbits(void* val) {
+    int mask = *(int*)val;
+    int current_bit;
+    int zero_bits = 0;
+
+    for (int i = 0; i < 32; i++) {
+        current_bit = (mask >> i) & 1;
+
+        if (current_bit == 0) zero_bits++;   
+    }
+
+    return 32 - zero_bits;
+}
+
+int kansock_isvalidmask(void* val) {
+    int mask = *(int*)val;
+
+    mask = ntohl(mask); // net -> host[тип long]
+
+    if ((mask >> 31) & 1 == 0) return 0; // крайний левый бит не может быть равен 0
+
+    int current_bit; // текущий бит
+    int prev_bit = 0; // бит справа от текущего
+
+    for (int i = 0; i < 31; i++) {
+        current_bit = (mask >> i) & 1;
+
+        if (current_bit < prev_bit) return 0; // текщий бит не может быть меньше предыдущего
+        prev_bit = current_bit;
+    }
+
+    return 1;
+}
+
+void kansock_gethostaddr(void* ip, void* mask, void* host_addr) {
+    int* arg1 = (int*)ip;
+    int* arg2 = (int*)mask;
+    int* res  = (int*)host_addr;
+    *res = (*arg1) & (~(*arg2));
+}
+
+void kansock_getnetaddr(void* ip, void* mask, void* net_addr) {
+    int* arg1 = (int*)ip;
+    int* arg2 = (int*)mask;
+    int* res  = (int*)net_addr;
+    *res = (*arg1) & (*arg2);
+}
+
+int kansock_create_socket(int domain, int type, int protocol) {
+    return socket(domain, type, protocol);
+}
+int kansock_create_socketIPv4(int type, int protocol) {
+    return socket(AF_INET, type, protocol);
+}
+int kansock_create_socketIPv6(int type, int protocol) {
+    return socket(AF_INET6, type, protocol);
 }

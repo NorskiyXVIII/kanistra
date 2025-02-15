@@ -7,7 +7,7 @@
 #ifdef _WIN32
         #include <winsock2.h>
         #include <ws2tcpip.h>
-#else __linux__
+#elif defined(__linux__)
         #include <sys/socket.h>
         #include <netinet/in.h>
         #include <arpa/inet.h>
@@ -53,6 +53,30 @@ BUFFER[kansock_getIndex(BUFFER, '\n')] = '\0';
 int kansock_lconnect(int conn, struct addrinfo* remote_addr, void(*print_ip_and_port)(struct in_addr, int));
 int kansock_connect(int conn, struct addrinfo* remote_addr);
 
+//@ getnetaddr
+//@ void* ip - получаем ip адрес
+//@ void* mask - маска подсети
+//@ void* net_addr - в net_addr получаем ip адрес подсети
+void kansock_getnetaddr(void* ip, void* mask, void* net_addr);
+
+//@ gethostaddr
+//@ void* ip - получаем ip адрес0
+//@ void* mask - маска подсети
+//@ void* net_addr - в net_addr получаем ip адрес узла
+void kansock_gethostaddr(void* ip, void* mask, void* host_addr);
+
+//@ isvalidmask
+//@ возвращает 0, если маска невалидна
+//@ иначе возвращает 1
+int kansock_isvalidmask(void* val);
+
+//@ netbits
+//@ возвращает число бит, которые побитово слияются с маской
+int kansock_netbits(void* val);
+
+int kansock_create_socket(int domain, int type, int protocol);
+int kansock_create_socket(int domain, int type, int protocol);
+int kansock_create_socket(int domain, int type, int protocol);
 
 #include "socket.c"
 
