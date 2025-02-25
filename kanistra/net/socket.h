@@ -75,8 +75,8 @@ int kansock_isvalidmask(void* val);
 int kansock_netbits(void* val);
 
 int kansock_create_socket(int domain, int type, int protocol);
-int kansock_create_socket(int domain, int type, int protocol);
-int kansock_create_socket(int domain, int type, int protocol);
+int kansock_create_socketIPv4(int type, int protocol);
+int kansock_create_socketIPv6(int type, int protocol);
 
 #include "socket.c"
 
