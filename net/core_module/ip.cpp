@@ -8,8 +8,10 @@ kanistra::net::ip_type::ip_type(const std::string& ip_addr) {
 kanistra::net::ip_type::ip_type(const ip_type& ip_addr) {
     type = ip_addr.type;
 }
-
 kanistra::net::ip_type::ip_type(const int family) {
+    *this = family;
+}
+kanistra::net::ip_type::ip_type(const char* family) {
     *this = family;
 }
 
@@ -29,6 +31,10 @@ kanistra::net::ip_type kanistra::net::ip_type::operator=(const std::string& ip_a
     return *this;
 }
 
+kanistra::net::ip_type kanistra::net::ip_type::operator=(const char* ip_addr) {
+    this->operator=(std::string(ip_addr));
+    return *this;
+}
 
 
 kanistra::net::ip_type::operator std::string() {
@@ -49,6 +55,9 @@ kanistra::net::ip::ip(const ip& ip_addr) {
 kanistra::net::ip::ip(const std::string& ip_addr) {
     this->set_ip(ip_addr);
 }
+kanistra::net::ip::ip(const char* ip_addr) {
+    this->set_ip(ip_addr);
+}
 
 void kanistra::net::ip::set_ip(const in_addr& ip_addr) {
     this->ip_addr = ip_addr;
@@ -62,11 +71,15 @@ void kanistra::net::ip::set_ip(const std::string& ip_addr) {
     inet_pton(family, ip_addr.c_str(), &(this->ip_addr));
 }
 
-kanistra::net::ip_type kanistra::net::ip::get_family() {
+void kanistra::net::ip::set_ip(const char* ip_addr) {
+    set_ip(std::string(ip_addr));
+}
+
+kanistra::net::ip_type kanistra::net::ip::get_family() const {
     return this->family;
 }
 
-in_addr kanistra::net::ip::get_ip() {
+in_addr kanistra::net::ip::get_ip() const {
     return this->ip_addr;
 }
 
@@ -83,6 +96,10 @@ kanistra::net::ip kanistra::net::ip::operator=(const kanistra::net::ip& ip_addr)
     return *this;
 }
 kanistra::net::ip kanistra::net::ip::operator=(const std::string& ip_addr) {
+    this->set_ip(ip_addr);
+    return *this;
+}
+kanistra::net::ip kanistra::net::ip::operator=(const char* ip_addr) {
     this->set_ip(ip_addr);
     return *this;
 }
